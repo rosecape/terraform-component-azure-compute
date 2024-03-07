@@ -8,6 +8,11 @@ variable "resource_group_name" {
   type        = string
 }
 
+variable "resource_group_location" {
+  description = "Location of the resource group in which to create the AKS cluster."
+  type        = string
+}
+
 variable "os_disk_size_gb" {
   description = "Disk size (in GB) to provision for each of the agent pool nodes. This value ranges from 0 to 1023."
   type        = number
