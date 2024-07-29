@@ -64,7 +64,7 @@ module "aks" {
 
   prefix                            = var.name
   resource_group_name               = var.resource_group_name
-  node_resource_group               = var.resource_group_name
+  node_resource_group               = try(var.node_resource_group_name, var.resource_group_name)
   os_disk_size_gb                   = var.os_disk_size_gb
   sku_tier                          = var.sku_tier
   rbac_aad                          = var.rbac_aad

@@ -8,6 +8,11 @@ variable "name" {
   type        = string
 }
 
+variable "node_resource_group_name" {
+  description = "Name of the resource group in which to create the AKS node pool."
+  type        = string
+}
+
 variable "resource_group_name" {
   description = "Name of the resource group in which to create the AKS cluster."
   type        = string
