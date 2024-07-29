@@ -1,3 +1,8 @@
+variable "airflow_storage_account_name" {
+  description = "Name of the storage account for Airflow logs."
+  type        = string
+}
+
 variable "name" {
   description = "Name of the deployment"
   type        = string
@@ -76,4 +81,16 @@ variable "role_based_access_control_enabled" {
 variable "vnet_subnet_id" {
   description = "The ID of a Subnet where the Kubernetes Node Pool should exist."
   type        = string
+}
+
+variable "net_profile_service_cidr" {
+  description = "The Network Range used by the Kubernetes service."
+  type        = string
+  default     = null
+}
+
+variable "net_profile_dns_service_ip" {
+  description = "The IP address of the DNS server used by the Kubernetes service."
+  type        = string
+  default     = null
 }
