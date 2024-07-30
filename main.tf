@@ -48,10 +48,12 @@ locals {
         enable_auto_scaling = true
         vnet_subnet_id      = var.vnet_subnet_id
         node_taints = [
-          "dedicated=workerGroup:NoSchedule"
+          "dedicated=workerGroup:NoSchedule",
+          "kubernetes.azure.com/scalesetpriority=spot:NoSchedule"
         ]
         node_labels = {
-          "dedicated" = "workerGroup"
+          "dedicated"                             = "workerGroup"
+          "kubernetes.azure.com/scalesetpriority" = "spot"
         }
       }
     },
