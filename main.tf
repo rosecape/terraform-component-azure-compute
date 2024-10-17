@@ -61,7 +61,7 @@ locals {
 
 module "aks" {
   source  = "Azure/aks/azurerm"
-  version = "8.0.0"
+  version = "9.1.0"
 
   prefix                              = var.name
   resource_group_name                 = var.resource_group_name
