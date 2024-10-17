@@ -20,7 +20,6 @@ locals {
         max_count           = 5
         enable_auto_scaling = true
         vnet_subnet_id      = var.vnet_subnet_id
-        node_taints         = ["dedicated=generalGroup:NoSchedule"]
         node_labels = {
           "dedicated" = "generalGroup"
         }
@@ -64,24 +63,28 @@ module "aks" {
   source  = "Azure/aks/azurerm"
   version = "8.0.0"
 
-  prefix                            = var.name
-  resource_group_name               = var.resource_group_name
-  node_resource_group               = try(var.node_resource_group_name, var.resource_group_name)
-  os_disk_size_gb                   = var.os_disk_size_gb
-  sku_tier                          = var.sku_tier
-  rbac_aad                          = var.rbac_aad
-  agents_size                       = "Standard_B2s"
-  agents_min_count                  = var.agents_min_count
-  agents_max_count                  = var.agents_max_count
-  enable_auto_scaling               = var.enable_auto_scaling
-  temporary_name_for_rotation       = var.temporary_name_for_rotation
-  net_profile_dns_service_ip        = var.net_profile_dns_service_ip
-  net_profile_service_cidr          = var.net_profile_service_cidr
-  role_based_access_control_enabled = var.role_based_access_control_enabled
-  vnet_subnet_id                    = var.vnet_subnet_id
-  node_pools                        = local.node_pools
-  only_critical_addons_enabled      = true
-  log_analytics_workspace_enabled   = false
+  prefix                              = var.name
+  resource_group_name                 = var.resource_group_name
+  node_resource_group                 = try(var.node_resource_group_name, var.resource_group_name)
+  os_disk_size_gb                     = var.os_disk_size_gb
+  sku_tier                            = var.sku_tier
+  rbac_aad                            = var.rbac_aad
+  agents_size                         = "Standard_B2s"
+  agents_min_count                    = var.agents_min_count
+  agents_max_count                    = var.agents_max_count
+  enable_auto_scaling                 = var.enable_auto_scaling
+  temporary_name_for_rotation         = var.temporary_name_for_rotation
+  net_profile_dns_service_ip          = var.net_profile_dns_service_ip
+  net_profile_service_cidr            = var.net_profile_service_cidr
+  role_based_access_control_enabled   = var.role_based_access_control_enabled
+  vnet_subnet_id                      = var.vnet_subnet_id
+  node_pools                          = local.node_pools
+  key_vault_secrets_provider_enabled  = true
+  workload_identity_enabled           = true
+  oidc_issuer_enabled                 = true
+  storage_profile_blob_driver_enabled = true
+  only_critical_addons_enabled        = true
+  log_analytics_workspace_enabled     = false
 }
 
 resource "azurerm_storage_account" "airflow" {
@@ -115,9 +118,3 @@ resource "azurerm_storage_management_policy" "prune_logs" {
     }
   }
 }
-
-# resource "azurerm_role_assignment" "aks_vnet_role_assignment" {
-#   scope                = var.vnet_subnet_id
-#   role_definition_name = "Network Contributor"
-#   principal_id         = module.aks.kubelet_identity[0].client_id
-# }
