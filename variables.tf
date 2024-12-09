@@ -16,6 +16,12 @@ variable "airflow_storage_account_name" {
   default     = null
 }
 
+variable "create_acr_registry" {
+  description = "Create an Azure Container Registry."
+  type        = bool
+  default     = false
+}
+
 variable "enable_auto_scaling" {
   description = "Enable autoscaling of the agent pool."
   type        = bool

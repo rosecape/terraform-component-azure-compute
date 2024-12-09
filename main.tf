@@ -121,6 +121,7 @@ resource "azurerm_storage_management_policy" "prune_logs" {
 }
 
 resource "azurerm_container_registry" "acr" {
+  count               = var.create_acr_registry ? 1 : 0
   name                = "rosecapev2"
   resource_group_name = var.resource_group_name
   location            = var.resource_group_location
@@ -130,17 +131,23 @@ resource "azurerm_container_registry" "acr" {
 
 # Azure Container Registry - Git Actions
 data "azuread_service_principal" "git_actions_acr_push" {
+  count = var.create_acr_registry ? 1 : 0
+
   display_name = "git-actions-acr-push"
 }
 
 resource "azurerm_role_assignment" "acr" {
-  scope                = azurerm_container_registry.acr.id
+  count = var.create_acr_registry ? 1 : 0
+
+  scope                = azurerm_container_registry.acr[0].id
   role_definition_name = "AcrPush"
   principal_id         = data.azuread_service_principal.git_actions_acr_push.object_id
 }
 
 resource "azurerm_role_assignment" "aks_acr_pull" {
-  scope                = azurerm_container_registry.acr.id
+  count = var.create_acr_registry ? 1 : 0
+
+  scope                = azurerm_container_registry.acr[0].id
   role_definition_name = "AcrPull"
   principal_id         = one(module.aks.kubelet_identity).object_id
 }
