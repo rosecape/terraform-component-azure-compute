@@ -141,7 +141,7 @@ resource "azurerm_role_assignment" "acr" {
 
   scope                = azurerm_container_registry.acr[0].id
   role_definition_name = "AcrPush"
-  principal_id         = data.azuread_service_principal.git_actions_acr_push.object_id
+  principal_id         = data.azuread_service_principal.git_actions_acr_push[0].id
 }
 
 resource "azurerm_role_assignment" "aks_acr_pull" {
