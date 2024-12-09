@@ -13,6 +13,7 @@ variable "agents_min_count" {
 variable "airflow_storage_account_name" {
   description = "Name of the storage account for Airflow logs."
   type        = string
+  default     = null
 }
 
 variable "enable_auto_scaling" {
@@ -48,6 +49,12 @@ variable "network_policy" {
   description = "Network policy to use for Kubernetes. Defaults to calico."
   type        = string
   default     = "calico"
+}
+
+variable "node_pools" {
+  description = "List of maps containing the properties of the node pools."
+  type        = any
+  default     = []
 }
 
 variable "node_resource_group_name" {

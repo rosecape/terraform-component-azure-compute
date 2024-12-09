@@ -1,5 +1,6 @@
 locals {
-  node_pools = merge(
+
+  node_pools = length(var.node_pools) > 0 ? var.node_pools : tomap(
     {
       "core" = {
         name                = "core"
@@ -69,7 +70,7 @@ module "aks" {
   os_disk_size_gb                     = var.os_disk_size_gb
   sku_tier                            = var.sku_tier
   rbac_aad                            = var.rbac_aad
-  agents_size                         = "Standard_B2s"
+  agents_size                         = "Standard_B2s_v2"
   agents_min_count                    = var.agents_min_count
   agents_max_count                    = var.agents_max_count
   enable_auto_scaling                 = var.enable_auto_scaling
@@ -117,4 +118,29 @@ resource "azurerm_storage_management_policy" "prune_logs" {
       }
     }
   }
+}
+
+resource "azurerm_container_registry" "acr" {
+  name                = "rosecapev2"
+  resource_group_name = var.resource_group_name
+  location            = var.resource_group_location
+  sku                 = "Standard"
+  admin_enabled       = true
+}
+
+# Azure Container Registry - Git Actions
+data "azuread_service_principal" "git_actions_acr_push" {
+  display_name = "git-actions-acr-push"
+}
+
+resource "azurerm_role_assignment" "acr" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPush"
+  principal_id         = data.azuread_service_principal.git_actions_acr_push.object_id
+}
+
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  scope                = azurerm_container_registry.acr.id
+  role_definition_name = "AcrPull"
+  principal_id         = one(module.aks.kubelet_identity).object_id
 }
